@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getTenants } from "../services/api";
 
+const API = "https://pg-management-system-fvqd.onrender.com/api";
+
 function Tenants() {
 
   const [tenants, setTenants] = useState([]);
@@ -25,7 +27,7 @@ function Tenants() {
   const fetchTenants = async () => {
     try {
       const res = await getTenants();
-      setTenants(res.data);
+      setTenants(res.data || []);
     } catch (err) {
       console.error("Error fetching tenants", err);
     }
@@ -39,6 +41,7 @@ function Tenants() {
   };
 
   const handleRoomChange = async (e) => {
+
     const roomId = e.target.value;
 
     setNewTenant({
@@ -47,18 +50,23 @@ function Tenants() {
     });
 
     if (roomId) {
+
       try {
-API.get("/tenants")
+
+        const res = await axios.get(`${API}/rooms/${roomId}`);
+
         setNewTenant(prev => ({
           ...prev,
           roomId: roomId,
-          rent: res.data.rent
+          rent: res.data?.rent || ""
         }));
 
       } catch (err) {
         console.error("Error fetching room rent", err);
       }
+
     }
+
   };
 
   const addTenant = async () => {
@@ -70,7 +78,7 @@ API.get("/tenants")
 
     try {
 
-      await axios.post("http://localhost:8080/api/tenants", {
+      await axios.post(`${API}/tenants`, {
         name: newTenant.name,
         phone: newTenant.phone,
         email: newTenant.email,
@@ -100,27 +108,39 @@ API.get("/tenants")
   };
 
   const checkoutTenant = async (id) => {
+
     try {
-      await axios.put(`http://localhost:8080/api/tenants/checkout/${id}`);
+
+      await axios.put(`${API}/tenants/checkout/${id}`);
+
       alert("Tenant Checked Out");
+
       fetchTenants();
+
     } catch (err) {
       console.error(err);
     }
+
   };
 
   const refundDeposit = async (id) => {
+
     try {
-      await axios.put(`http://localhost:8080/api/tenants/refund/${id}`);
+
+      await axios.put(`${API}/tenants/refund/${id}`);
+
       alert("Deposit Refunded");
+
       fetchTenants();
+
     } catch (err) {
       console.error(err);
     }
+
   };
 
   const filteredTenants = tenants.filter(t =>
-    t.name.toLowerCase().includes(search.toLowerCase())
+    t.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -205,7 +225,6 @@ API.get("/tenants")
       <table className="table">
 
         <thead style={{ background: "#111827", color: "white" }}>
-
           <tr>
             <th>ID</th>
             <th>Name</th>
@@ -218,14 +237,13 @@ API.get("/tenants")
             <th>Status</th>
             <th>Actions</th>
           </tr>
-
         </thead>
 
         <tbody>
 
           {filteredTenants.map((tenant) => (
 
-            <tr key={tenant.tenantId} style={{ borderBottom: "1px solid #ddd" }}>
+            <tr key={tenant.tenantId}>
 
               <td>{tenant.tenantId}</td>
               <td>{tenant.name}</td>
@@ -236,40 +254,17 @@ API.get("/tenants")
               <td>{tenant.depositStatus}</td>
               <td>{tenant.refundStatus}</td>
               <td>{tenant.status}</td>
-<td>
-<a href={`/tenant/${tenant.tenantId}`}>
-View Profile
-</a>
-</td>
+
               <td>
 
                 {tenant.status === "ACTIVE" && (
-                  <button
-                    onClick={() => checkoutTenant(tenant.tenantId)}
-                    style={{
-                      background: "#ef4444",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 10px",
-                      borderRadius: "4px",
-                      marginRight: "5px"
-                    }}
-                  >
+                  <button onClick={() => checkoutTenant(tenant.tenantId)}>
                     Checkout
                   </button>
                 )}
 
                 {tenant.refundStatus === "NOT_REFUNDED" && (
-                  <button
-                    onClick={() => refundDeposit(tenant.tenantId)}
-                    style={{
-                      background: "#10b981",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 10px",
-                      borderRadius: "4px"
-                    }}
-                  >
+                  <button onClick={() => refundDeposit(tenant.tenantId)}>
                     Refund
                   </button>
                 )}
