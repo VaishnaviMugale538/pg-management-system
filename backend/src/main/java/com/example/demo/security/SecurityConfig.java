@@ -25,6 +25,7 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().permitAll()
             );
 
@@ -36,11 +37,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-            "http://localhost:3000",
-            "https://pg-management-system-six.vercel.app"
-        ));
-
+        config.setAllowedOriginPatterns(List.of("*"));   // allow all origins
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -52,5 +49,4 @@ public class SecurityConfig {
 
         return source;
     }
-    
 }
