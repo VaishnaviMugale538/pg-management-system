@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api"
+  baseURL: "https://pg-management-system-fvqd.onrender.com"
 });
 
 // Attach JWT token automatically
