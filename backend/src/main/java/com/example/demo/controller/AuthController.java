@@ -1,36 +1,53 @@
-package com.example.demo.controller;
+package com.example.demo.service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
-import com.example.demo.security.JwtUtil;
-import com.example.demo.service.AuthService;
+import com.example.demo.entity.Admin;
+import com.example.demo.entity.Tenant;
+import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.TenantRepository;
 
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
+@Service
+public class AuthService {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private AdminRepository adminRepository;
 
-    @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+    @Autowired
+    private TenantRepository tenantRepository;
 
-        String username = loginData.get("username");
-        String password = loginData.get("password");
+    public Map<String, Object> login(String username, String password) {
 
-        Map<String, Object> response = authService.login(username, password);
+        Map<String, Object> response = new HashMap<>();
 
-        String token = jwtUtil.generateToken(username);
+        // ADMIN LOGIN
+        Admin admin = adminRepository.findByUsername(username);
 
-        response.put("token", token);
+        if (admin != null && admin.getPassword().equals(password)) {
 
-        return response;
+            response.put("role", "ADMIN");
+            response.put("userId", admin.getId());
+            response.put("name", admin.getUsername());
+
+            return response;
+        }
+
+        // TENANT LOGIN
+        Tenant tenant = tenantRepository.findFirstByEmail(username);
+
+        if (tenant != null && tenant.getPassword().equals(password)) {
+
+            response.put("role", "TENANT");
+            response.put("userId", tenant.getTenantId());
+            response.put("name", tenant.getName());
+
+            return response;
+        }
+
+        throw new RuntimeException("Invalid credentials");
     }
 }
