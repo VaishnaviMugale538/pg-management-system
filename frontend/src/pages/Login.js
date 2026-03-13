@@ -12,39 +12,35 @@ function Login() {
 
   const handleLogin = async () => {
 
-  try {
+    try {
 
-    const res = await axios.post(
-"https://pg-management-system-fvqd.onrender.com/api/auth/login")
-      null,
-      {
-        params: {
+      const res = await axios.post(
+        "https://pg-management-system-fvqd.onrender.com/api/auth/login",
+        {
           username: username,
           password: password
         }
+      );
+
+      // store login data
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("name", res.data.name);
+
+      alert("Login Successful");
+
+      if (res.data.role === "ADMIN") {
+        navigate("/dashboard");
+      } else {
+        navigate("/tenant/dashboard");
       }
-    );
 
-    // store login data
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("role", res.data.role);
-    localStorage.setItem("userId", res.data.userId);
-    localStorage.setItem("name", res.data.name);
-
-    alert("Login Successful");
-
-    // redirect based on role
-    if (res.data.role === "ADMIN") {
-      navigate("/dashboard");
-    } else {
-      navigate("/tenant/dashboard");
+    } catch (error) {
+      alert("Invalid Credentials");
+      console.error(error);
     }
-
-  } catch (error) {
-    alert("Invalid Credentials");
-  }
-};
-
+  };
 
   return (
 
