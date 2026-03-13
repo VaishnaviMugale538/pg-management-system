@@ -20,8 +20,10 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestParam String username,
-                                     @RequestParam String password) {
+    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+
+        String username = loginData.get("username");
+        String password = loginData.get("password");
 
         Map<String, Object> response = authService.login(username, password);
 
