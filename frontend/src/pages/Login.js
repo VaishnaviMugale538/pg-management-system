@@ -16,14 +16,12 @@ function Login() {
 
       const res = await axios.post(
         "https://pg-management-system-fvqd.onrender.com/api/auth/login",
-        null, 
-        {
-              params: {
+      {
 
           username: username,
           password: password
         }
-      }
+      
       );
 
       // store login data
