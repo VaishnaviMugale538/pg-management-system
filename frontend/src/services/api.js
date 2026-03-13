@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://pg-management-system-fvqd.onrender.com"
+  baseURL: "https://pg-management-system-fvqd.onrender.com/api"
 });
 
 // Attach JWT token automatically
@@ -36,4 +36,6 @@ export const getPendingPayments = () => API.get("/payments/pending");
 export const getExpenses = () => API.get("/expenses");
 
 // Rent reminders
-export const getRentReminders = () => API.get("/dashboard/rent-reminders");
+export const getRentReminders = () => API.get("/payments/rent-reminders");
+
+export default API;
