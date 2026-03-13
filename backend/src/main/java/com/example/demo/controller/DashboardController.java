@@ -17,7 +17,8 @@ import com.example.demo.repository.RoomRepository;
 import com.example.demo.repository.TenantRepository;
 import com.example.demo.repository.PaymentRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {

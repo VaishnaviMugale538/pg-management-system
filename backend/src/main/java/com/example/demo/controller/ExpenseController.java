@@ -10,7 +10,7 @@ import com.example.demo.service.ExpenseService;
 
 @RestController
 @RequestMapping("/api/expenses")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class ExpenseController {
 
     @Autowired

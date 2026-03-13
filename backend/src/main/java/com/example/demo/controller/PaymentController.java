@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.RentReminderDTO;
 import com.example.demo.entity.Payment;
 import com.example.demo.service.PaymentService;
-
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {

@@ -10,7 +10,7 @@ import com.example.demo.repository.StayHistoryRepository;
 
 @RestController
 @RequestMapping("/history")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class StayHistoryController {
 
     @Autowired

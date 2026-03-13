@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.RoomDTO;
 import com.example.demo.entity.Room;
 import com.example.demo.service.RoomService;
-
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
