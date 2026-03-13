@@ -10,8 +10,7 @@ import com.example.demo.entity.Payment;
 import com.example.demo.entity.Tenant;
 import com.example.demo.service.PaymentService;
 import com.example.demo.service.TenantService;
-
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/tenants")
 public class TenantController {
