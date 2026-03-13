@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API = "https://pg-management-system-fvqd.onrender.com/api";
+
 function Expenses() {
 
   const [expenses, setExpenses] = useState([]);
@@ -17,8 +19,12 @@ function Expenses() {
   }, []);
 
   const fetchExpenses = async () => {
-    const res = await axios.get("http://localhost:8080/api/expenses");
-    setExpenses(res.data);
+    try {
+      const res = await axios.get(`${API}/expenses`);
+      setExpenses(res.data);
+    } catch (error) {
+      console.error("Error fetching expenses", error);
+    }
   };
 
   const handleChange = (e) => {
@@ -30,16 +36,30 @@ function Expenses() {
 
   const addExpense = async () => {
 
-    await axios.post("http://localhost:8080/api/expenses", newExpense);
+    if (!newExpense.title || !newExpense.amount) {
+      alert("Please fill required fields");
+      return;
+    }
 
-    fetchExpenses();
+    try {
 
-    setNewExpense({
-      title: "",
-      amount: "",
-      category: "",
-      date: ""
-    });
+      await axios.post(`${API}/expenses`, {
+        ...newExpense,
+        amount: Number(newExpense.amount)
+      });
+
+      fetchExpenses();
+
+      setNewExpense({
+        title: "",
+        amount: "",
+        category: "",
+        date: ""
+      });
+
+    } catch (error) {
+      console.error("Error adding expense", error);
+    }
   };
 
   return (
@@ -99,14 +119,14 @@ function Expenses() {
         <tbody>
 
           {expenses.map((exp) => (
-  <tr key={exp.id}>
-    <td>{exp.id}</td>
-    <td>{exp.title || "N/A"}</td>
-    <td>{exp.amount || 0}</td>
-    <td>{exp.category || "N/A"}</td>
-    <td>{exp.date || "N/A"}</td>
-  </tr>
-))}
+            <tr key={exp.id}>
+              <td>{exp.id}</td>
+              <td>{exp.title || "N/A"}</td>
+              <td>{exp.amount || 0}</td>
+              <td>{exp.category || "N/A"}</td>
+              <td>{exp.date || "N/A"}</td>
+            </tr>
+          ))}
 
         </tbody>
 

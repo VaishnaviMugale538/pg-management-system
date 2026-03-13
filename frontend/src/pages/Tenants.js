@@ -48,8 +48,7 @@ function Tenants() {
 
     if (roomId) {
       try {
-        const res = await axios.get(`http://localhost:8080/api/rooms/${roomId}`);
-
+API.get("/tenants")
         setNewTenant(prev => ({
           ...prev,
           roomId: roomId,

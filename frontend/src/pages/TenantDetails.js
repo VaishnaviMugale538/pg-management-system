@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API = "https://pg-management-system-fvqd.onrender.com/api";
+
 function TenantDetails() {
 
   const tenantId = localStorage.getItem("userId");
@@ -15,42 +17,35 @@ function TenantDetails() {
 
   const fetchTenant = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/tenants/${tenantId}`
-      );
+      const res = await axios.get(`${API}/tenants/${tenantId}`);
       setTenant(res.data);
     } catch (error) {
-      console.error("Error loading tenant");
+      console.error("Error loading tenant", error);
     }
   };
 
   const fetchPayments = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/payments/tenant/${tenantId}`
-      );
-      setPayments(res.data);
+      const res = await axios.get(`${API}/payments/tenant/${tenantId}`);
+      setPayments(res.data || []);
     } catch (error) {
-      console.error("Error loading payments");
+      console.error("Error loading payments", error);
     }
   };
 
-  // Pay Rent
   const payRent = async (paymentId) => {
 
     try {
 
-      await axios.put(
-        `http://localhost:8080/api/payments/pay/${paymentId}`
-      );
+      await axios.put(`${API}/payments/pay/${paymentId}`);
 
       alert("Payment Successful");
 
-      fetchPayments(); // refresh payment table
+      fetchPayments();
 
     } catch (error) {
 
-      console.error("Payment failed");
+      console.error("Payment failed", error);
 
     }
 
@@ -90,46 +85,58 @@ function TenantDetails() {
 
         <tbody>
 
-          {payments.map((p) => (
+          {payments.length === 0 ? (
 
-            <tr key={p.paymentId}>
-
-              <td>₹{p.amount}</td>
-
-              <td style={{fontWeight:"bold"}}>
-                {p.status}
+            <tr>
+              <td colSpan="4" style={{ textAlign: "center" }}>
+                No payments found
               </td>
-
-              <td>{p.paymentDate}</td>
-
-              <td>
-
-                {p.status === "PENDING" ? (
-
-                  <button
-                    onClick={() => payRent(p.paymentId)}
-                    style={{
-                      padding:"6px 12px",
-                      background:"#22c55e",
-                      color:"white",
-                      border:"none",
-                      borderRadius:"4px"
-                    }}
-                  >
-                    Pay Now
-                  </button>
-
-                ) : (
-
-                  <span style={{color:"green"}}>Paid</span>
-
-                )}
-
-              </td>
-
             </tr>
 
-          ))}
+          ) : (
+
+            payments.map((p) => (
+
+              <tr key={p.paymentId}>
+
+                <td>₹{p.amount}</td>
+
+                <td style={{ fontWeight: "bold" }}>
+                  {p.status}
+                </td>
+
+                <td>{p.paymentDate}</td>
+
+                <td>
+
+                  {p.status === "PENDING" ? (
+
+                    <button
+                      onClick={() => payRent(p.paymentId)}
+                      style={{
+                        padding: "6px 12px",
+                        background: "#22c55e",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px"
+                      }}
+                    >
+                      Pay Now
+                    </button>
+
+                  ) : (
+
+                    <span style={{ color: "green" }}>Paid</span>
+
+                  )}
+
+                </td>
+
+              </tr>
+
+            ))
+
+          )}
 
         </tbody>
 

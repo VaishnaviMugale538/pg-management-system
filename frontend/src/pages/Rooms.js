@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API = "https://pg-management-system-fvqd.onrender.com/api";
+
 function Rooms() {
 
   const [rooms, setRooms] = useState([]);
@@ -18,7 +20,7 @@ function Rooms() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/rooms");
+      const response = await axios.get(`${API}/rooms`);
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms", error);
@@ -41,7 +43,7 @@ function Rooms() {
 
     try {
 
-      await axios.post("http://localhost:8080/api/rooms", {
+      await axios.post(`${API}/rooms`, {
         roomNumber: newRoom.roomNumber,
         capacity: Number(newRoom.capacity),
         rent: Number(newRoom.rent)
@@ -126,7 +128,7 @@ function Rooms() {
 
       </div>
 
-     <table className="table">
+      <table className="table">
 
         <thead style={{ background: "#111827", color: "white" }}>
           <tr>

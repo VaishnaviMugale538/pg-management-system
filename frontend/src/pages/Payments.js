@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 
+const API = "https://pg-management-system-fvqd.onrender.com/api";
+
 function Payments() {
 
   const [payments, setPayments] = useState([]);
@@ -12,7 +14,7 @@ function Payments() {
 
   const fetchPayments = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/payments");
+      const response = await axios.get(`${API}/payments`);
       setPayments(response.data || []);
     } catch (error) {
       console.error("Error fetching payments", error);
@@ -33,29 +35,26 @@ function Payments() {
     });
 
     const blob = new Blob([csv], { type: "text/csv" });
-
     const url = window.URL.createObjectURL(blob);
 
     const a = document.createElement("a");
-
     a.href = url;
     a.download = "payments_report.csv";
-
     a.click();
   };
+
   const generateReceipt = (payment) => {
 
-  const doc = new jsPDF();
+    const doc = new jsPDF();
 
-  doc.text("PG Manager - Rent Receipt", 20, 20);
-  doc.text(`Tenant ID: ${payment.tenantId}`, 20, 40);
-  doc.text(`Amount: ₹${payment.amount}`, 20, 50);
-  doc.text(`Status: ${payment.status}`, 20, 60);
-  doc.text(`Date: ${payment.paymentDate}`, 20, 70);
+    doc.text("PG Manager - Rent Receipt", 20, 20);
+    doc.text(`Tenant ID: ${payment.tenantId}`, 20, 40);
+    doc.text(`Amount: ₹${payment.amount}`, 20, 50);
+    doc.text(`Status: ${payment.status}`, 20, 60);
+    doc.text(`Date: ${payment.paymentDate}`, 20, 70);
 
-  doc.save("receipt.pdf");
-
-};
+    doc.save(`receipt_${payment.paymentId}.pdf`);
+  };
 
   return (
     <div style={{ padding: "30px" }}>
@@ -86,6 +85,7 @@ function Payments() {
             <th>Amount</th>
             <th>Status</th>
             <th>Date</th>
+            <th>Receipt</th>
           </tr>
         </thead>
 
@@ -94,7 +94,7 @@ function Payments() {
           {payments.length === 0 ? (
 
             <tr>
-              <td colSpan="5" style={{ textAlign: "center", padding: "10px" }}>
+              <td colSpan="6" style={{ textAlign: "center", padding: "10px" }}>
                 No payment records found
               </td>
             </tr>
@@ -121,11 +121,13 @@ function Payments() {
                 </td>
 
                 <td>{payment.paymentDate}</td>
+
                 <td>
-<button onClick={()=>generateReceipt(payment)}>
-Download Receipt
-</button>
-</td>
+                  <button onClick={() => generateReceipt(payment)}>
+                    Download Receipt
+                  </button>
+                </td>
+
               </tr>
 
             ))
